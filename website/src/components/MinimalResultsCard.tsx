@@ -210,7 +210,7 @@ export const MinimalResultsCard: React.FC<MinimalResultsCardProps> = ({
         {/* 3. Follow Activity Header */}
         <div className="flex items-center justify-between gap-2 mb-3 pt-2">
           <div className="flex items-center gap-1.5 text-xs text-zinc-700 dark:text-zinc-200 font-bold">
-            <span>⚡ Audited Following Activity {isUnlocked ? `(${allAccounts.length} accounts)` : "(Top 5 Preview)"}</span>
+            <span>⚡ Audited {selectedTargetType === "followers" ? "Followers" : "Following"} Activity {isUnlocked ? `(${allAccounts.length} accounts)` : "(Top 5 Preview)"}</span>
           </div>
 
           <button

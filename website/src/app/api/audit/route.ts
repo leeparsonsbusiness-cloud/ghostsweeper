@@ -270,7 +270,12 @@ function buildLiveAuditResult(
 ): AuditResult {
   const followersSet = new Set(
     followersRaw.map((f: any) =>
-      (f.username || f.handle || "").toLowerCase().replace(/^@/, "")
+      (f.username || f.handle || "").toLowerCase().replace(/^@/, "").trim()
+    )
+  );
+  const followingSet = new Set(
+    followingRaw.map((f: any) =>
+      (f.username || f.handle || "").toLowerCase().replace(/^@/, "").trim()
     )
   );
 
@@ -331,7 +336,7 @@ function buildLiveAuditResult(
       postCount: item.postsCount ?? item.media_count ?? 0,
       followersCount: item.followersCount ?? item.follower_count ?? 0,
       followingCount: item.followingCount ?? item.following_count ?? 0,
-      followsYou: true,
+      followsYou: followingSet.has(uname.toLowerCase()),
       chronologicalRank: idx,
       isNewFollow,
       detectedAt: isNewFollow ? "Today" : undefined,
@@ -455,7 +460,7 @@ function buildLiveAuditResult(
     female: Math.round((realFollowersCount * foFemalePct) / 100),
     brand: Math.round((realFollowersCount * foBrandPct) / 100),
     inactiveOver90d: Math.round((realFollowersCount * foInactivePct) / 100),
-    nonFollowers: 0,
+    nonFollowers: followersBatch.accounts.filter((a) => !a.followsYou).length,
     totalAudited: followersBatch.accounts.length,
   };
 
@@ -482,7 +487,7 @@ function buildLiveAuditResult(
     totalCount: realFollowersCount,
     demographics: followersDemographics,
     ghostCount: followersBatch.summary.ghostCount,
-    nonReciprocalsCount: 0,
+    nonReciprocalsCount: followersBatch.accounts.filter((a) => !a.followsYou).length,
     reachPenalty: 0,
     lockedCount: Math.max(0, followersBatch.accounts.length - followersSample.length),
     sampleAccounts: followersSample,
